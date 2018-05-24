@@ -1,0 +1,43 @@
+library(survey)
+library("haven")
+
+##Percentage of Subjects Male/Female
+
+##Number that are Male (assuming 1 is Male)
+Is_Male <- bps1214[,"gender"] == 1
+Total_Male <- sum(Is_Male)
+
+##Number that are Female (assuming 2 is Female)
+Is_Female <- bps1214[,"gender"] == 2
+Total_Female <- sum(Is_Female)
+
+##Percentage that are male/female
+Unweighted_Percentage_Male <- 
+  Total_Male/(Total_Female+Total_Male)
+Unweighted_Percentage_Female <- 
+  Total_Female/(Total_Female + Total_Male)
+
+##svyset [pweight=wta000], brrweight(wta001-wta200) 
+##vce(brr) mse
+srd <- svrepdesign(data = bps1214, weights = bps1214$wta000,
+                   type = "BRR", scale = 1, 
+                   repweights = "wta00[1-200]", mse = T)
+
+##Weighted Total Male/Female
+Weighted_Total_Male = 0
+Weighted_Total_Female = 0
+for (i in 1:nrow(bps1214)) {
+  if (bps1214[i,"gender"] == 1) {
+    Weighted_Total_Male = 
+      Weighted_Total_Male + srd$pweights[i]
+  } else {
+    Weighted_Total_Female = 
+      Weighted_Total_Female + srd$pweights[i]
+  }
+}
+
+##Weighted Average Male/Female
+Weighted_Percentage_Male <- Weighted_Total_Male/
+  (Weighted_Total_Male+Weighted_Total_Female)
+Weighted_Percentage_Female <- Weighted_Total_Female/
+  (Weighted_Total_Female+Weighted_Total_Male)
