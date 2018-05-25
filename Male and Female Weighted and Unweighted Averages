@@ -1,34 +1,17 @@
 library(survey)
-library("haven")
+library("readstata13")
+library(dplyr)
+library(car)
+
+# Import Data as bps1214_raw
+bps1214 <- bps1214_raw %>%
+  mutate(gender_rc = recode(bps1214$gender, "'Male' = 'Male'; 'Female' = 'Female'; else = NA"))
 
 # Unweighted Percentages
-gender_rc = recode(bps1214$gender, "'Male' = 'Male'; 'Female' = 'Female'; else = NA")
-prop.table(table(gender_rc))
+prop.table(table(bps1214$gender_rc))
 
-
-
-
-##svyset [pweight=wta000], brrweight(wta001-wta200) 
-##vce(brr) mse
+# Weighted Percentages
 srd <- svrepdesign(data = bps1214, weights = bps1214$wta000,
                    type = "BRR", scale = 1, 
                    repweights = "wta00[1-200]", mse = T)
-
-##Weighted Total Male/Female
-Weighted_Total_Male = 0
-Weighted_Total_Female = 0
-for (i in 1:nrow(bps1214)) {
-  if (bps1214[i,"gender"] == 1) {
-    Weighted_Total_Male = 
-      Weighted_Total_Male + srd$pweights[i]
-  } else {
-    Weighted_Total_Female = 
-      Weighted_Total_Female + srd$pweights[i]
-  }
-}
-
-##Weighted Average Male/Female
-Weighted_Percentage_Male <- Weighted_Total_Male/
-  (Weighted_Total_Male+Weighted_Total_Female)
-Weighted_Percentage_Female <- Weighted_Total_Female/
-  (Weighted_Total_Female+Weighted_Total_Male)
+svymean(~ gender_rc, srd)
