@@ -2,17 +2,9 @@ library(survey)
 library("haven")
 
 # Unweighted Percentages
-
-# Number that are Male (assuming 1 is Male)
-Total_Male <- sum(bps1214[,"gender"] == 1)
-
-# Number that are Female (assuming 2 is Female)
-Total_Female <- sum(bps1214[,"gender"] == 2)
-
-# Unweighted Percentages Table
-prop.table(matrix(c(Total_Male, Total_Female), 1), 1)
-
-
+gender_rc = recode(bps1214$gender, "'Male' = 'Male'; 'Female' = 'Female'; else = NA")
+gender_rc
+prop.table(table(gender_rc))
 
 
 
