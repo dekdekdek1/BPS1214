@@ -1,21 +1,21 @@
 library(survey)
 library("haven")
 
-##Percentage of Subjects Male/Female
+# Unweighted Percentages
 
-##Number that are Male (assuming 1 is Male)
-Is_Male <- bps1214[,"gender"] == 1
-Total_Male <- sum(Is_Male)
+# Number that are Male (assuming 1 is Male)
+Total_Male <- sum(bps1214[,"gender"] == 1)
 
-##Number that are Female (assuming 2 is Female)
-Is_Female <- bps1214[,"gender"] == 2
-Total_Female <- sum(Is_Female)
+# Number that are Female (assuming 2 is Female)
+Total_Female <- sum(bps1214[,"gender"] == 2)
 
-##Percentage that are male/female
-Unweighted_Percentage_Male <- 
-  Total_Male/(Total_Female+Total_Male)
-Unweighted_Percentage_Female <- 
-  Total_Female/(Total_Female + Total_Male)
+# Unweighted Percentages Table
+prop.table(matrix(c(Total_Male, Total_Female), 1), 1)
+
+
+
+
+
 
 ##svyset [pweight=wta000], brrweight(wta001-wta200) 
 ##vce(brr) mse
