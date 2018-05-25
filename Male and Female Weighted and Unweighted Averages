@@ -3,7 +3,6 @@ library("haven")
 
 # Unweighted Percentages
 gender_rc = recode(bps1214$gender, "'Male' = 'Male'; 'Female' = 'Female'; else = NA")
-gender_rc
 prop.table(table(gender_rc))
 
 
